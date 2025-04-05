@@ -1,0 +1,189 @@
+<html>
+<head>
+<title>DiskScheduler.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #7a7e85;}
+.s4 { color: #2aacb8;}
+.s5 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+DiskScheduler.java</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">List</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">ArrayList</span><span class="s2">;</span>
+
+<span class="s0">public class </span><span class="s1">DiskScheduler </span><span class="s2">{</span>
+    <span class="s0">public static void </span><span class="s1">main</span><span class="s2">(</span><span class="s1">String</span><span class="s2">[] </span><span class="s1">args</span><span class="s2">) {</span>
+        <span class="s3">// ---------------------------------------- Generowanie 10 żądań (6 zestawów danych) ----------------------------------------</span>
+        <span class="s0">int </span><span class="s1">numTrials </span><span class="s2">= </span><span class="s4">10</span><span class="s2">;  </span><span class="s3">// Liczba prób dla każdego algorytmu</span>
+
+        <span class="s3">// Zmienna do przechowywania wyników dla każdego algorytmu</span>
+        <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Long</span><span class="s2">&gt;&gt; </span><span class="s1">fcfsResults </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+        <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Long</span><span class="s2">&gt;&gt; </span><span class="s1">sstfResults </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+        <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Long</span><span class="s2">&gt;&gt; </span><span class="s1">scanResults </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+        <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Long</span><span class="s2">&gt;&gt; </span><span class="s1">cscanResults </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+        <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Long</span><span class="s2">&gt;&gt; </span><span class="s1">edfResults </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+        <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Long</span><span class="s2">&gt;&gt; </span><span class="s1">fdscanResults </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+        <span class="s3">// ------------------------------------------------------------------------------------------------------------------</span>
+
+        <span class="s3">// ---------------------------------------- Przeprowadzenie 10 prób dla każdego algorytmu ----------------------------------------</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s4">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">numTrials</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s3">// Generowanie różnych zestawów danych dla każdej próby</span>
+            <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Request</span><span class="s2">&gt; </span><span class="s1">requestsFCFS </span><span class="s2">= </span><span class="s1">Request</span><span class="s2">.</span><span class="s1">generateRequests</span><span class="s2">(</span><span class="s4">10</span><span class="s2">, </span><span class="s4">0</span><span class="s2">, </span><span class="s4">180</span><span class="s2">, </span><span class="s4">0</span><span class="s2">, </span><span class="s4">100</span><span class="s2">, </span><span class="s4">50</span><span class="s2">, </span><span class="s4">150</span><span class="s2">);</span>
+            <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Request</span><span class="s2">&gt; </span><span class="s1">requestsSSTF </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;(</span><span class="s1">requestsFCFS</span><span class="s2">);</span>
+            <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Request</span><span class="s2">&gt; </span><span class="s1">requestsSCAN </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;(</span><span class="s1">requestsFCFS</span><span class="s2">);</span>
+            <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Request</span><span class="s2">&gt; </span><span class="s1">requestsCSCAN </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;(</span><span class="s1">requestsFCFS</span><span class="s2">);</span>
+            <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Request</span><span class="s2">&gt; </span><span class="s1">requestsEDF </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;(</span><span class="s1">requestsFCFS</span><span class="s2">);</span>
+            <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Request</span><span class="s2">&gt; </span><span class="s1">requestsFDSCAN </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;(</span><span class="s1">requestsFCFS</span><span class="s2">);</span>
+
+            <span class="s3">// Wywołanie algorytmu FCFS i zapisanie wyników</span>
+            <span class="s0">long</span><span class="s2">[] </span><span class="s1">resultsFCFS </span><span class="s2">= </span><span class="s1">FCFS</span><span class="s2">.</span><span class="s1">execute</span><span class="s2">(</span><span class="s1">requestsFCFS</span><span class="s2">);</span>
+            <span class="s1">fcfsResults</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">toList</span><span class="s2">(</span><span class="s1">resultsFCFS</span><span class="s2">));  </span><span class="s3">// Dodanie wyników FCFS do listy</span>
+
+            <span class="s3">// Wywołanie algorytmu SSTF i zapisanie wyników</span>
+            <span class="s0">long</span><span class="s2">[] </span><span class="s1">resultsSSTF </span><span class="s2">= </span><span class="s1">SSTF</span><span class="s2">.</span><span class="s1">execute</span><span class="s2">(</span><span class="s1">requestsSSTF</span><span class="s2">);</span>
+            <span class="s1">sstfResults</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">toList</span><span class="s2">(</span><span class="s1">resultsSSTF</span><span class="s2">));  </span><span class="s3">// Dodanie wyników SSTF do listy</span>
+
+            <span class="s3">// Wywołanie algorytmu SCAN i zapisanie wyników</span>
+            <span class="s0">long</span><span class="s2">[] </span><span class="s1">resultsSCAN </span><span class="s2">= </span><span class="s1">SCAN</span><span class="s2">.</span><span class="s1">execute</span><span class="s2">(</span><span class="s1">requestsSCAN</span><span class="s2">);</span>
+            <span class="s1">scanResults</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">toList</span><span class="s2">(</span><span class="s1">resultsSCAN</span><span class="s2">));  </span><span class="s3">// Dodanie wyników SCAN do listy</span>
+
+            <span class="s3">// Wywołanie algorytmu C-SCAN i zapisanie wyników</span>
+            <span class="s0">long</span><span class="s2">[] </span><span class="s1">resultsCSCAN </span><span class="s2">= </span><span class="s1">CSCAN</span><span class="s2">.</span><span class="s1">execute</span><span class="s2">(</span><span class="s1">requestsCSCAN</span><span class="s2">);</span>
+            <span class="s1">cscanResults</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">toList</span><span class="s2">(</span><span class="s1">resultsCSCAN</span><span class="s2">));  </span><span class="s3">// Dodanie wyników C-SCAN do listy</span>
+
+            <span class="s3">// Wywołanie algorytmu EDF i zapisanie wyników</span>
+            <span class="s0">long</span><span class="s2">[] </span><span class="s1">resultsEDF </span><span class="s2">= </span><span class="s1">EDF</span><span class="s2">.</span><span class="s1">execute</span><span class="s2">(</span><span class="s1">requestsEDF</span><span class="s2">);</span>
+            <span class="s1">edfResults</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">toList</span><span class="s2">(</span><span class="s1">resultsEDF</span><span class="s2">));  </span><span class="s3">// Dodanie wyników EDF do listy</span>
+
+            <span class="s3">// Wywołanie algorytmu FD-SCAN i zapisanie wyników</span>
+            <span class="s0">long</span><span class="s2">[] </span><span class="s1">resultsFDSCAN </span><span class="s2">= </span><span class="s1">FDSCAN</span><span class="s2">.</span><span class="s1">execute</span><span class="s2">(</span><span class="s1">requestsFDSCAN</span><span class="s2">);</span>
+            <span class="s1">fdscanResults</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">toList</span><span class="s2">(</span><span class="s1">resultsFDSCAN</span><span class="s2">));  </span><span class="s3">// Dodanie wyników FD-SCAN do listy</span>
+        <span class="s2">}</span>
+        <span class="s3">// ------------------------------------------------------------------------------------------------------------------</span>
+
+        <span class="s3">// ---------------------------------------- Obliczanie średnich, odchyleń standardowych, wariancji oraz max/min dla każdego algorytmu ----------------------------------------</span>
+        <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s5">&quot;FCFS Statistics:&quot;</span><span class="s2">);</span>
+        <span class="s1">printStatistics</span><span class="s2">(</span><span class="s1">fcfsResults</span><span class="s2">);  </span><span class="s3">// Obliczanie i wyświetlanie wyników FCFS</span>
+
+        <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s5">&quot;</span><span class="s0">\n</span><span class="s5">SSTF Statistics:&quot;</span><span class="s2">);</span>
+        <span class="s1">printStatistics</span><span class="s2">(</span><span class="s1">sstfResults</span><span class="s2">);  </span><span class="s3">// Obliczanie i wyświetlanie wyników SSTF</span>
+
+        <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s5">&quot;</span><span class="s0">\n</span><span class="s5">SCAN Statistics:&quot;</span><span class="s2">);</span>
+        <span class="s1">printStatistics</span><span class="s2">(</span><span class="s1">scanResults</span><span class="s2">);  </span><span class="s3">// Obliczanie i wyświetlanie wyników SCAN</span>
+
+        <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s5">&quot;</span><span class="s0">\n</span><span class="s5">C-SCAN Statistics:&quot;</span><span class="s2">);</span>
+        <span class="s1">printStatistics</span><span class="s2">(</span><span class="s1">cscanResults</span><span class="s2">);  </span><span class="s3">// Obliczanie i wyświetlanie wyników C-SCAN</span>
+
+        <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s5">&quot;</span><span class="s0">\n</span><span class="s5">EDF Statistics:&quot;</span><span class="s2">);</span>
+        <span class="s1">printStatistics</span><span class="s2">(</span><span class="s1">edfResults</span><span class="s2">);  </span><span class="s3">// Obliczanie i wyświetlanie wyników EDF</span>
+
+        <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s5">&quot;</span><span class="s0">\n</span><span class="s5">FD-SCAN Statistics:&quot;</span><span class="s2">);</span>
+        <span class="s1">printStatistics</span><span class="s2">(</span><span class="s1">fdscanResults</span><span class="s2">);  </span><span class="s3">// Obliczanie i wyświetlanie wyników FD-SCAN</span>
+        <span class="s3">// ------------------------------------------------------------------------------------------------------------------</span>
+    <span class="s2">}</span>
+
+    <span class="s3">// ---------------------------------------- Pomocnicza metoda konwertująca tablicę na listę ----------------------------------------</span>
+    <span class="s0">private static </span><span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Long</span><span class="s2">&gt; </span><span class="s1">toList</span><span class="s2">(</span><span class="s0">long</span><span class="s2">[] </span><span class="s1">array</span><span class="s2">) {</span>
+        <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Long</span><span class="s2">&gt; </span><span class="s1">list </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">long </span><span class="s1">value </span><span class="s2">: </span><span class="s1">array</span><span class="s2">) {  </span><span class="s3">// Iterujemy po tablicy i dodajemy elementy do listy</span>
+            <span class="s1">list</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">value</span><span class="s2">);</span>
+        <span class="s2">}</span>
+        <span class="s0">return </span><span class="s1">list</span><span class="s2">;  </span><span class="s3">// Zwracamy listę</span>
+    <span class="s2">}</span>
+    <span class="s3">// ------------------------------------------------------------------------------------------------------------------</span>
+
+    <span class="s3">// ---------------------------------------- Funkcja pomocnicza do obliczania średnich, odchyleń standardowych, wariancji, max i min ----------------------------------------</span>
+    <span class="s0">private static void </span><span class="s1">printStatistics</span><span class="s2">(</span><span class="s1">List</span><span class="s2">&lt;</span><span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Long</span><span class="s2">&gt;&gt; </span><span class="s1">results</span><span class="s2">) {</span>
+        <span class="s0">long </span><span class="s1">totalMaxWaitingTime </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;  </span><span class="s3">// Zmienna do sumowania maksymalnych czasów oczekiwania</span>
+        <span class="s0">long </span><span class="s1">totalMinWaitingTime </span><span class="s2">= </span><span class="s1">Long</span><span class="s2">.</span><span class="s1">MAX_VALUE</span><span class="s2">;  </span><span class="s3">// Inicjalizujemy minimalny czas oczekiwania na maksymalny możliwy</span>
+        <span class="s0">long </span><span class="s1">totalWaitingTime </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;  </span><span class="s3">// Zmienna do sumowania czasów oczekiwania</span>
+        <span class="s0">long </span><span class="s1">totalCylinderChanges </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;  </span><span class="s3">// Zmienna do sumowania zmian cylindra</span>
+        <span class="s0">long</span><span class="s2">[] </span><span class="s1">allMaxTimes </span><span class="s2">= </span><span class="s0">new long</span><span class="s2">[</span><span class="s1">results</span><span class="s2">.</span><span class="s1">size</span><span class="s2">()];  </span><span class="s3">// Tablica do przechowywania maksymalnych czasów oczekiwania</span>
+        <span class="s0">long</span><span class="s2">[] </span><span class="s1">allMinTimes </span><span class="s2">= </span><span class="s0">new long</span><span class="s2">[</span><span class="s1">results</span><span class="s2">.</span><span class="s1">size</span><span class="s2">()];  </span><span class="s3">// Tablica do przechowywania minimalnych czasów oczekiwania</span>
+        <span class="s0">long</span><span class="s2">[] </span><span class="s1">allAverageTimes </span><span class="s2">= </span><span class="s0">new long</span><span class="s2">[</span><span class="s1">results</span><span class="s2">.</span><span class="s1">size</span><span class="s2">()];  </span><span class="s3">// Tablica do przechowywania średnich czasów oczekiwania</span>
+
+        <span class="s3">// Iterujemy po wszystkich próbach, aby obliczyć wartości</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s4">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">results</span><span class="s2">.</span><span class="s1">size</span><span class="s2">(); </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Long</span><span class="s2">&gt; </span><span class="s1">result </span><span class="s2">= </span><span class="s1">results</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s1">i</span><span class="s2">);  </span><span class="s3">// Pobieramy wyniki z i-tej próby</span>
+            <span class="s0">long </span><span class="s1">maxWaitingTime </span><span class="s2">= </span><span class="s1">result</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s4">0</span><span class="s2">);  </span><span class="s3">// Maksymalny czas oczekiwania</span>
+            <span class="s0">long </span><span class="s1">minWaitingTime </span><span class="s2">= </span><span class="s1">result</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s4">1</span><span class="s2">);  </span><span class="s3">// Minimalny czas oczekiwania</span>
+            <span class="s0">long </span><span class="s1">averageWaitingTime </span><span class="s2">= </span><span class="s1">result</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s4">2</span><span class="s2">);  </span><span class="s3">// Średni czas oczekiwania</span>
+            <span class="s0">long </span><span class="s1">cylinderChanges </span><span class="s2">= </span><span class="s1">result</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s4">3</span><span class="s2">);  </span><span class="s3">// Zmiany cylindra</span>
+
+            <span class="s1">totalMaxWaitingTime </span><span class="s2">+= </span><span class="s1">maxWaitingTime</span><span class="s2">;  </span><span class="s3">// Sumujemy maksymalne czasy oczekiwania</span>
+            <span class="s1">totalMinWaitingTime </span><span class="s2">= </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">min</span><span class="s2">(</span><span class="s1">totalMinWaitingTime</span><span class="s2">, </span><span class="s1">minWaitingTime</span><span class="s2">);  </span><span class="s3">// Szukamy najmniejszego czasu oczekiwania</span>
+            <span class="s1">totalWaitingTime </span><span class="s2">+= </span><span class="s1">averageWaitingTime</span><span class="s2">;  </span><span class="s3">// Sumujemy średnie czasy oczekiwania</span>
+            <span class="s1">totalCylinderChanges </span><span class="s2">+= </span><span class="s1">cylinderChanges</span><span class="s2">;  </span><span class="s3">// Sumujemy zmiany cylindra</span>
+
+            <span class="s1">allMaxTimes</span><span class="s2">[</span><span class="s1">i</span><span class="s2">] = </span><span class="s1">maxWaitingTime</span><span class="s2">;  </span><span class="s3">// Dodajemy wynik do tablicy maxWaitingTime</span>
+            <span class="s1">allMinTimes</span><span class="s2">[</span><span class="s1">i</span><span class="s2">] = </span><span class="s1">minWaitingTime</span><span class="s2">;  </span><span class="s3">// Dodajemy wynik do tablicy minWaitingTime</span>
+            <span class="s1">allAverageTimes</span><span class="s2">[</span><span class="s1">i</span><span class="s2">] = </span><span class="s1">averageWaitingTime</span><span class="s2">;  </span><span class="s3">// Dodajemy wynik do tablicy averageWaitingTime</span>
+        <span class="s2">}</span>
+
+        <span class="s3">// Obliczanie średnich</span>
+        <span class="s0">long </span><span class="s1">averageMaxWaitingTime </span><span class="s2">= </span><span class="s1">totalMaxWaitingTime </span><span class="s2">/ </span><span class="s1">results</span><span class="s2">.</span><span class="s1">size</span><span class="s2">();  </span><span class="s3">// Średnia maksymalnych czasów oczekiwania</span>
+        <span class="s0">long </span><span class="s1">averageMinWaitingTime </span><span class="s2">= </span><span class="s1">totalMinWaitingTime </span><span class="s2">/ </span><span class="s1">results</span><span class="s2">.</span><span class="s1">size</span><span class="s2">();  </span><span class="s3">// Średnia minimalnych czasów oczekiwania</span>
+        <span class="s0">long </span><span class="s1">averageAvgWaitingTime </span><span class="s2">= </span><span class="s1">totalWaitingTime </span><span class="s2">/ </span><span class="s1">results</span><span class="s2">.</span><span class="s1">size</span><span class="s2">();  </span><span class="s3">// Średnia średnich czasów oczekiwania</span>
+        <span class="s0">long </span><span class="s1">averageCylinderChanges </span><span class="s2">= </span><span class="s1">totalCylinderChanges </span><span class="s2">/ </span><span class="s1">results</span><span class="s2">.</span><span class="s1">size</span><span class="s2">();  </span><span class="s3">// Średnia liczby zmian cylindra</span>
+
+        <span class="s3">// Obliczanie odchylenia standardowego i wariancji</span>
+        <span class="s0">double </span><span class="s1">varianceMaxWaitingTime </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;  </span><span class="s3">// Zmienna do obliczania wariancji dla maxWaitingTime</span>
+        <span class="s0">double </span><span class="s1">varianceAvgWaitingTime </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;  </span><span class="s3">// Zmienna do obliczania wariancji dla averageWaitingTime</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s4">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">results</span><span class="s2">.</span><span class="s1">size</span><span class="s2">(); </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s1">varianceMaxWaitingTime </span><span class="s2">+= </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">pow</span><span class="s2">(</span><span class="s1">allMaxTimes</span><span class="s2">[</span><span class="s1">i</span><span class="s2">] - </span><span class="s1">averageMaxWaitingTime</span><span class="s2">, </span><span class="s4">2</span><span class="s2">);  </span><span class="s3">// Obliczanie wariancji</span>
+            <span class="s1">varianceAvgWaitingTime </span><span class="s2">+= </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">pow</span><span class="s2">(</span><span class="s1">allAverageTimes</span><span class="s2">[</span><span class="s1">i</span><span class="s2">] - </span><span class="s1">averageAvgWaitingTime</span><span class="s2">, </span><span class="s4">2</span><span class="s2">);  </span><span class="s3">// Obliczanie wariancji</span>
+        <span class="s2">}</span>
+        <span class="s1">varianceMaxWaitingTime </span><span class="s2">/= </span><span class="s1">results</span><span class="s2">.</span><span class="s1">size</span><span class="s2">();  </span><span class="s3">// Obliczanie średniej wariancji</span>
+        <span class="s1">varianceAvgWaitingTime </span><span class="s2">/= </span><span class="s1">results</span><span class="s2">.</span><span class="s1">size</span><span class="s2">();  </span><span class="s3">// Obliczanie średniej wariancji</span>
+
+        <span class="s0">double </span><span class="s1">stdDevMaxWaitingTime </span><span class="s2">= </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">sqrt</span><span class="s2">(</span><span class="s1">varianceMaxWaitingTime</span><span class="s2">);  </span><span class="s3">// Odchylenie standardowe dla maxWaitingTime</span>
+        <span class="s0">double </span><span class="s1">stdDevAvgWaitingTime </span><span class="s2">= </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">sqrt</span><span class="s2">(</span><span class="s1">varianceAvgWaitingTime</span><span class="s2">);  </span><span class="s3">// Odchylenie standardowe dla averageWaitingTime</span>
+
+        <span class="s3">// Wypisanie wyników</span>
+        <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s5">&quot;Average Max Waiting Time: &quot; </span><span class="s2">+ </span><span class="s1">averageMaxWaitingTime</span><span class="s2">);</span>
+        <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s5">&quot;Average Min Waiting Time: &quot; </span><span class="s2">+ </span><span class="s1">averageMinWaitingTime</span><span class="s2">);</span>
+        <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s5">&quot;Average Waiting Time: &quot; </span><span class="s2">+ </span><span class="s1">averageAvgWaitingTime</span><span class="s2">);</span>
+        <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s5">&quot;Average Cylinder Changes (Distance): &quot; </span><span class="s2">+ </span><span class="s1">averageCylinderChanges</span><span class="s2">);</span>
+        <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s5">&quot;Standard Deviation Max Waiting Time: &quot; </span><span class="s2">+ </span><span class="s1">stdDevMaxWaitingTime</span><span class="s2">);</span>
+        <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s5">&quot;Standard Deviation Average Waiting Time: &quot; </span><span class="s2">+ </span><span class="s1">stdDevAvgWaitingTime</span><span class="s2">);</span>
+        <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s5">&quot;Max Cylinder Changes (Distance): &quot; </span><span class="s2">+ </span><span class="s1">findMax</span><span class="s2">(</span><span class="s1">allMaxTimes</span><span class="s2">));</span>
+        <span class="s1">System</span><span class="s2">.</span><span class="s1">out</span><span class="s2">.</span><span class="s1">println</span><span class="s2">(</span><span class="s5">&quot;Min Cylinder Changes (Distance): &quot; </span><span class="s2">+ </span><span class="s1">findMin</span><span class="s2">(</span><span class="s1">allMinTimes</span><span class="s2">));</span>
+    <span class="s2">}</span>
+    <span class="s3">// ------------------------------------------------------------------------------------------------------------------</span>
+
+    <span class="s3">// ---------------------------------------- Funkcja pomocnicza do znajdowania maksymalnej wartości w tablicy ----------------------------------------</span>
+    <span class="s0">private static long </span><span class="s1">findMax</span><span class="s2">(</span><span class="s0">long</span><span class="s2">[] </span><span class="s1">array</span><span class="s2">) {</span>
+        <span class="s0">long </span><span class="s1">max </span><span class="s2">= </span><span class="s1">array</span><span class="s2">[</span><span class="s4">0</span><span class="s2">];  </span><span class="s3">// Inicjalizacja zmiennej do przechowywania maksymalnej wartości</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">long </span><span class="s1">val </span><span class="s2">: </span><span class="s1">array</span><span class="s2">) {  </span><span class="s3">// Iterujemy po tablicy</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">val </span><span class="s2">&gt; </span><span class="s1">max</span><span class="s2">) {</span>
+                <span class="s1">max </span><span class="s2">= </span><span class="s1">val</span><span class="s2">;  </span><span class="s3">// Jeśli napotkamy większą wartość, ustawiamy ją jako nowy max</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+        <span class="s0">return </span><span class="s1">max</span><span class="s2">;  </span><span class="s3">// Zwracamy maksymalną wartość</span>
+    <span class="s2">}</span>
+    <span class="s3">// ------------------------------------------------------------------------------------------------------------------</span>
+
+    <span class="s3">// ---------------------------------------- Funkcja pomocnicza do znajdowania minimalnej wartości w tablicy ----------------------------------------</span>
+    <span class="s0">private static long </span><span class="s1">findMin</span><span class="s2">(</span><span class="s0">long</span><span class="s2">[] </span><span class="s1">array</span><span class="s2">) {</span>
+        <span class="s0">long </span><span class="s1">min </span><span class="s2">= </span><span class="s1">array</span><span class="s2">[</span><span class="s4">0</span><span class="s2">];  </span><span class="s3">// Inicjalizacja zmiennej do przechowywania minimalnej wartości</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">long </span><span class="s1">val </span><span class="s2">: </span><span class="s1">array</span><span class="s2">) {  </span><span class="s3">// Iterujemy po tablicy</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">val </span><span class="s2">&lt; </span><span class="s1">min</span><span class="s2">) {</span>
+                <span class="s1">min </span><span class="s2">= </span><span class="s1">val</span><span class="s2">;  </span><span class="s3">// Jeśli napotkamy mniejszą wartość, ustawiamy ją jako nowy min</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+        <span class="s0">return </span><span class="s1">min</span><span class="s2">;  </span><span class="s3">// Zwracamy minimalną wartość</span>
+    <span class="s2">}</span>
+    <span class="s3">// ------------------------------------------------------------------------------------------------------------------</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>
