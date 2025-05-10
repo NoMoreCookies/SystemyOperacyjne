@@ -9,7 +9,7 @@ from config import (
     MAX_PODZBIOR
 )
 from utils import losuj_podzbior_stron, generuj_faze
-
+# długość ciągu to LICZBA_FAZ × DLUGOSC_FAZY
 def generuj_ciag_odwolan():
     """Generuje pełny ciąg odwołań z uwzględnieniem zasady lokalności."""
     ciag_odwolan = []
