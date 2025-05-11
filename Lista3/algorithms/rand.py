@@ -1,4 +1,4 @@
-# algorithms/rand.py
+
 import random
 
 def rand(ciag_odwolan, rozmiar_pamieci):

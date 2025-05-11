@@ -6,9 +6,6 @@ public class CSCAN {
             return new long[] {0, 0, 0, 0, 0}; // Zwracamy 0, jeśli nie ma żądań
         }
 
-        // Sortowanie żądań po czasie przybycia (arrivalTime)
-        requests.sort(null);
-
         long totalWaitingTime = 0;
         long maxWaitingTime = Long.MIN_VALUE;
         long minWaitingTime = Long.MAX_VALUE;
@@ -19,8 +16,9 @@ public class CSCAN {
         long currentTime = 0;
 
         while (!requests.isEmpty()) {
-            // Sortowanie żądań według cylindra w porządku rosnącym
             requests.sort(null);
+            System.out.println(requests.size());
+            if(currentTime<requests.get(0).getArrivalTime()){currentTime = requests.get(0).getArrivalTime();}
 
             Request closestRequest = requests.get(0);
 
@@ -42,10 +40,11 @@ public class CSCAN {
                 totalCylinderChanges += 180;
             }
 
-            requests.remove(closestRequest);
+            requests.remove(0);
         }
 
         long averageWaitingTime = (requests.isEmpty()) ? 0 : totalWaitingTime / requests.size();
+
         return new long[] {maxWaitingTime, minWaitingTime, averageWaitingTime, totalCylinderChanges, 0};
     }
 }

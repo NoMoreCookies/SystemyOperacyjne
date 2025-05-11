@@ -19,6 +19,8 @@ public class DiskScheduler {
         for (int i = 0; i < numTrials; i++) {
             // Generowanie różnych zestawów danych dla każdej próby
             List<Request> requestsFCFS = Request.generateRequests(10, 0, 180, 0, 100, 50, 150);
+
+            // Tworzenie kopii listy żądań, aby operować na różnych kopiach
             List<Request> requestsSSTF = new ArrayList<>(requestsFCFS);
             List<Request> requestsSCAN = new ArrayList<>(requestsFCFS);
             List<Request> requestsCSCAN = new ArrayList<>(requestsFCFS);
@@ -26,28 +28,28 @@ public class DiskScheduler {
             List<Request> requestsFDSCAN = new ArrayList<>(requestsFCFS);
 
             // Wywołanie algorytmu FCFS i zapisanie wyników
-            long[] resultsFCFS = FCFS.execute(requestsFCFS);
+            long[] resultsFCFS = FCFS.execute(new ArrayList<>(requestsFCFS));  // Przekazywanie kopii listy
             fcfsResults.add(toList(resultsFCFS));  // Dodanie wyników FCFS do listy
 
             // Wywołanie algorytmu SSTF i zapisanie wyników
-            long[] resultsSSTF = SSTF.execute(requestsSSTF);
+            long[] resultsSSTF = SSTF.execute(new ArrayList<>(requestsSSTF));  // Przekazywanie kopii listy
             sstfResults.add(toList(resultsSSTF));  // Dodanie wyników SSTF do listy
 
             // Wywołanie algorytmu SCAN i zapisanie wyników
-            long[] resultsSCAN = SCAN.execute(requestsSCAN);
+            long[] resultsSCAN = SCAN.execute(new ArrayList<>(requestsSCAN));  // Przekazywanie kopii listy
             scanResults.add(toList(resultsSCAN));  // Dodanie wyników SCAN do listy
 
             // Wywołanie algorytmu C-SCAN i zapisanie wyników
-            long[] resultsCSCAN = CSCAN.execute(requestsCSCAN);
-            cscanResults.add(toList(resultsCSCAN));  // Dodanie wyników C-SCAN do listy
+            //long[] resultsCSCAN = CSCAN.execute(new ArrayList<>(requestsCSCAN));  // Przekazywanie kopii listy
+            //cscanResults.add(toList(resultsCSCAN));  // Dodanie wyników C-SCAN do listy
 
             // Wywołanie algorytmu EDF i zapisanie wyników
-            long[] resultsEDF = EDF.execute(requestsEDF);
-            edfResults.add(toList(resultsEDF));  // Dodanie wyników EDF do listy
+            //long[] resultsEDF = EDF.execute(new ArrayList<>(requestsEDF));  // Przekazywanie kopii listy
+            //edfResults.add(toList(resultsEDF));  // Dodanie wyników EDF do listy
 
             // Wywołanie algorytmu FD-SCAN i zapisanie wyników
-            long[] resultsFDSCAN = FDSCAN.execute(requestsFDSCAN);
-            fdscanResults.add(toList(resultsFDSCAN));  // Dodanie wyników FD-SCAN do listy
+            //long[] resultsFDSCAN = FDSCAN.execute(new ArrayList<>(requestsFDSCAN));  // Przekazywanie kopii listy
+            //fdscanResults.add(toList(resultsFDSCAN));  // Dodanie wyników FD-SCAN do listy
         }
         // ------------------------------------------------------------------------------------------------------------------
 
@@ -62,13 +64,13 @@ public class DiskScheduler {
         printStatistics(scanResults);  // Obliczanie i wyświetlanie wyników SCAN
 
         System.out.println("\nC-SCAN Statistics:");
-        printStatistics(cscanResults);  // Obliczanie i wyświetlanie wyników C-SCAN
+        //printStatistics(cscanResults);  // Obliczanie i wyświetlanie wyników C-SCAN
 
         System.out.println("\nEDF Statistics:");
-        printStatistics(edfResults);  // Obliczanie i wyświetlanie wyników EDF
+        //printStatistics(edfResults);  // Obliczanie i wyświetlanie wyników EDF
 
         System.out.println("\nFD-SCAN Statistics:");
-        printStatistics(fdscanResults);  // Obliczanie i wyświetlanie wyników FD-SCAN
+        //printStatistics(fdscanResults);  // Obliczanie i wyświetlanie wyników FD-SCAN
         // ------------------------------------------------------------------------------------------------------------------
     }
 
@@ -85,34 +87,28 @@ public class DiskScheduler {
     // ---------------------------------------- Funkcja pomocnicza do obliczania średnich, odchyleń standardowych, wariancji, max i min ----------------------------------------
     private static void printStatistics(List<List<Long>> results) {
         long totalMaxWaitingTime = 0;  // Zmienna do sumowania maksymalnych czasów oczekiwania
-        long totalMinWaitingTime = Long.MAX_VALUE;  // Inicjalizujemy minimalny czas oczekiwania na maksymalny możliwy
         long totalWaitingTime = 0;  // Zmienna do sumowania czasów oczekiwania
         long totalCylinderChanges = 0;  // Zmienna do sumowania zmian cylindra
         long[] allMaxTimes = new long[results.size()];  // Tablica do przechowywania maksymalnych czasów oczekiwania
-        long[] allMinTimes = new long[results.size()];  // Tablica do przechowywania minimalnych czasów oczekiwania
         long[] allAverageTimes = new long[results.size()];  // Tablica do przechowywania średnich czasów oczekiwania
 
         // Iterujemy po wszystkich próbach, aby obliczyć wartości
         for (int i = 0; i < results.size(); i++) {
             List<Long> result = results.get(i);  // Pobieramy wyniki z i-tej próby
             long maxWaitingTime = result.get(0);  // Maksymalny czas oczekiwania
-            long minWaitingTime = result.get(1);  // Minimalny czas oczekiwania
             long averageWaitingTime = result.get(2);  // Średni czas oczekiwania
             long cylinderChanges = result.get(3);  // Zmiany cylindra
 
             totalMaxWaitingTime += maxWaitingTime;  // Sumujemy maksymalne czasy oczekiwania
-            totalMinWaitingTime = Math.min(totalMinWaitingTime, minWaitingTime);  // Szukamy najmniejszego czasu oczekiwania
             totalWaitingTime += averageWaitingTime;  // Sumujemy średnie czasy oczekiwania
             totalCylinderChanges += cylinderChanges;  // Sumujemy zmiany cylindra
 
             allMaxTimes[i] = maxWaitingTime;  // Dodajemy wynik do tablicy maxWaitingTime
-            allMinTimes[i] = minWaitingTime;  // Dodajemy wynik do tablicy minWaitingTime
             allAverageTimes[i] = averageWaitingTime;  // Dodajemy wynik do tablicy averageWaitingTime
         }
 
         // Obliczanie średnich
         long averageMaxWaitingTime = totalMaxWaitingTime / results.size();  // Średnia maksymalnych czasów oczekiwania
-        long averageMinWaitingTime = totalMinWaitingTime / results.size();  // Średnia minimalnych czasów oczekiwania
         long averageAvgWaitingTime = totalWaitingTime / results.size();  // Średnia średnich czasów oczekiwania
         long averageCylinderChanges = totalCylinderChanges / results.size();  // Średnia liczby zmian cylindra
 
@@ -131,17 +127,14 @@ public class DiskScheduler {
 
         // Wypisanie wyników
         System.out.println("Average Max Waiting Time: " + averageMaxWaitingTime);
-        System.out.println("Average Min Waiting Time: " + averageMinWaitingTime);
         System.out.println("Average Waiting Time: " + averageAvgWaitingTime);
         System.out.println("Average Cylinder Changes (Distance): " + averageCylinderChanges);
         System.out.println("Standard Deviation Max Waiting Time: " + stdDevMaxWaitingTime);
         System.out.println("Standard Deviation Average Waiting Time: " + stdDevAvgWaitingTime);
         System.out.println("Max Cylinder Changes (Distance): " + findMax(allMaxTimes));
-        System.out.println("Min Cylinder Changes (Distance): " + findMin(allMinTimes));
     }
-    // ------------------------------------------------------------------------------------------------------------------
 
-    // ---------------------------------------- Funkcja pomocnicza do znajdowania maksymalnej wartości w tablicy ----------------------------------------
+    // Funkcja pomocnicza do znajdowania maksymalnej wartości w tablicy
     private static long findMax(long[] array) {
         long max = array[0];  // Inicjalizacja zmiennej do przechowywania maksymalnej wartości
         for (long val : array) {  // Iterujemy po tablicy
@@ -151,17 +144,4 @@ public class DiskScheduler {
         }
         return max;  // Zwracamy maksymalną wartość
     }
-    // ------------------------------------------------------------------------------------------------------------------
-
-    // ---------------------------------------- Funkcja pomocnicza do znajdowania minimalnej wartości w tablicy ----------------------------------------
-    private static long findMin(long[] array) {
-        long min = array[0];  // Inicjalizacja zmiennej do przechowywania minimalnej wartości
-        for (long val : array) {  // Iterujemy po tablicy
-            if (val < min) {
-                min = val;  // Jeśli napotkamy mniejszą wartość, ustawiamy ją jako nowy min
-            }
-        }
-        return min;  // Zwracamy minimalną wartość
-    }
-    // ------------------------------------------------------------------------------------------------------------------
 }

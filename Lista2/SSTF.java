@@ -3,8 +3,7 @@ import java.util.ArrayList;
 
 public class SSTF {
     // ---------------------------------------- Metoda wykonująca algorytm SSTF (Shortest Seek Time First) ----------------------------------------
-    public static long[] execute(List<Request> requests)
-    {
+    public static long[] execute(List<Request> requests) {
         long totalWaitingTime = 0;  // Zmienna do sumowania czasów oczekiwania
         long maxWaitingTime = Long.MIN_VALUE;  // Inicjalizacja maksymalnego czasu oczekiwania
         long minWaitingTime = Long.MAX_VALUE;  // Inicjalizacja minimalnego czasu oczekiwania
@@ -18,44 +17,53 @@ public class SSTF {
 
         // ---------------------------------------- Dopóki są żądania do obsłużenia ----------------------------------------
         while (!remainingRequests.isEmpty()) {
-            // Wybieramy najbliższe żądanie (najmniejsza odległość)
-            Request closestRequest = findClosestRequest(remainingRequests, currentCylinder);
-
-            // Jeżeli żądanie przybywa po czasie bieżącym, ustawiamy currentTime na czas przybycia żądania
-            currentTime = Math.max(currentTime, closestRequest.getArrivalTime());  // Ustawiamy currentTime na czas przybycia
-
-            // Czas oczekiwania = czas, w którym żądanie jest obsługiwane - czas zgłoszenia
-            long waitingTime = currentTime - closestRequest.getArrivalTime();  // Obliczamy czas oczekiwania
-            closestRequest.setWaitingTime(waitingTime);  // Ustawiamy czas oczekiwania w obiekcie Request
-            totalWaitingTime += waitingTime;  // Sumujemy czas oczekiwania
-
-            // Aktualizujemy max i min czas oczekiwania
-            if (waitingTime > maxWaitingTime)
-            {
-                maxWaitingTime = waitingTime;  // Aktualizujemy max czas oczekiwania
-            }
-            if (waitingTime < minWaitingTime)
-            {
-                minWaitingTime = waitingTime;  // Aktualizujemy min czas oczekiwania
+            requests.sort(null);
+            System.out.println(requests.size());
+            if(currentTime<requests.get(0).getArrivalTime()){currentTime = requests.get(0).getArrivalTime();}
+            List<Request> availableRequests = new ArrayList<>();
+            for (Request req : remainingRequests) {
+                if (req.getArrivalTime() <= currentTime) {
+                    availableRequests.add(req);  // Dodajemy dostępne żądania
+                }
             }
 
-            // Po obsłudze żądania, czas systemu (currentTime) jest zwiększany o czas realizacji operacji
-            currentTime += 1;  // Zakładając, że każda operacja trwa 1 jednostkę czasu
+            // Jeśli są dostępne jakieś żądania, wybieramy to, które jest najbliższe
+            if (!availableRequests.isEmpty()) {
+                Request closestRequest = findClosestRequest(availableRequests, currentCylinder);
 
-            // Liczymy zmianę cylindra (odległość)
-            long cylinderChange = Math.abs(closestRequest.getCylinder() - currentCylinder);  // Obliczamy zmianę cylindra (odległość)
-            totalCylinderChanges += cylinderChange;  // Sumujemy odległość
-            currentCylinder = closestRequest.getCylinder();  // Ustawiamy nową pozycję głowicy
+                // Czas oczekiwania = czas, w którym żądanie jest obsługiwane - czas przybycia
+                long waitingTime = currentTime - closestRequest.getArrivalTime();  // Obliczamy czas oczekiwania
+                closestRequest.setWaitingTime(waitingTime);  // Ustawiamy czas oczekiwania w obiekcie Request
+                totalWaitingTime += waitingTime;  // Sumujemy czas oczekiwania
 
-            // Usuwamy obsłużone żądanie z listy
-            remainingRequests.remove(closestRequest);  // Usuwamy żądanie z listy po obsłużeniu
+                // Aktualizujemy max i min czas oczekiwania
+                if (waitingTime > maxWaitingTime) {
+                    maxWaitingTime = waitingTime;  // Aktualizujemy max czas oczekiwania
+                }
+                if (waitingTime < minWaitingTime) {
+                    minWaitingTime = waitingTime;  // Aktualizujemy min czas oczekiwania
+                }
+
+                // Po obsłużeniu żądania, czas systemu (currentTime) jest zwiększany o czas realizacji operacji
+                currentTime += Math.abs(closestRequest.getCylinder() - currentCylinder);  // Czas realizacji = odległość do cylindra
+
+                // Liczymy zmianę cylindra (odległość)
+                totalCylinderChanges += Math.abs(closestRequest.getCylinder() - currentCylinder);  // Sumujemy odległość
+                currentCylinder = closestRequest.getCylinder();  // Ustawiamy nową pozycję głowicy
+
+                // Usuwamy obsłużone żądanie z listy
+                remainingRequests.remove(closestRequest);  // Usuwamy żądanie z listy po obsłużeniu
+            } else {
+                // Jeśli nie ma dostępnych żądań (wszystkie pozostałe nie dotarły jeszcze), możemy zakończyć algorytm
+                // W takim przypadku musimy poczekać na pojawienie się nowych żądań
+                currentTime++;  // Zwiększamy czas oczekiwania, czekając na nowe żądania
+            }
         }
         // ------------------------------------------------------------------------------------------------------------------
 
         // ---------------------------------------- Obliczamy średni czas oczekiwania ----------------------------------------
         long averageWaitingTime = totalWaitingTime / requests.size();  // Obliczamy średni czas oczekiwania
 
-        // Zwracamy tablicę z wartościami: maxWaitingTime, minWaitingTime, averageWaitingTime, totalCylinderChanges, startingCylinder
         return new long[] {maxWaitingTime, minWaitingTime, averageWaitingTime, totalCylinderChanges, 0};  // 0 - początkowa pozycja cylindra (zakładamy cylinder 0)
     }
     // ------------------------------------------------------------------------------------------------------------------
@@ -65,16 +73,14 @@ public class SSTF {
         Request closestRequest = requests.get(0);  // Inicjalizujemy najbliższe żądanie na pierwszym elemencie
         int minDistance = Math.abs(closestRequest.getCylinder() - currentCylinder);  // Obliczamy początkową odległość
 
-        for (Request req : requests)
-        {
+        for (Request req : requests) {
             int distance = Math.abs(req.getCylinder() - currentCylinder);  // Obliczamy odległość od obecnej pozycji głowicy
-            if (distance < minDistance)
-            {
+            if (distance < minDistance) {
                 closestRequest = req;  // Ustawiamy nowe żądanie jako najbliższe
                 minDistance = distance;  // Aktualizujemy minimalną odległość
             }
         }
-
+        System.out.println("jd");
         return closestRequest;  // Zwracamy najbliższe żądanie
     }
     // ------------------------------------------------------------------------------------------------------------------

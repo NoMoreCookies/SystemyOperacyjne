@@ -1,5 +1,3 @@
-# algorithms/opt.py
-
 def opt(ciag_odwolan, rozmiar_pamieci):
     pamiec = []
     bledy = 0
@@ -24,7 +22,7 @@ def opt(ciag_odwolan, rozmiar_pamieci):
                 try:
                     indeksy.append(przyszle.index(s))
                 except ValueError:
-                    indeksy.append(float('inf'))  # strona nie będzie już używana
+                    indeksy.append(float('inf')) 
 
             #WYBIERAM STRONĘ, KTÓRA WYSTĘPUJĘ NAJDALEJ W PRZYSZŁOŚCI
             #---------------------------------------------

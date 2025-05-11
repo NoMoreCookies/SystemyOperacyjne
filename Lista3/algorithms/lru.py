@@ -1,12 +1,14 @@
-# algorithms/lru_z_licznikami.py
 
 def lru(ciag_odwolan, rozmiar_pamieci):
-    pamiec = {}  # słownik: strona -> licznik czasu nieużycia
+    #DEFINIOWANIE ZM.POMOCNICZYCH
+    #------------------------------------------------------
+    pamiec = {} 
     bledy = 0
+    #------------------------------------------------------
 
     for strona in ciag_odwolan:
 
-        # Zwiększ czas nieużycia dla wszystkich stron
+        # ZWIĘKSZAMY CZAS OD OSTATNIEGO UŻYCIA KAŻDEJ ZE STRON
         #---------------------------------------------
         for s in pamiec:
             pamiec[s] += 1

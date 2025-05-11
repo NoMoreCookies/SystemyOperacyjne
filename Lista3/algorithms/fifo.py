@@ -1,5 +1,3 @@
-# algorithms/fifo.py
-
 from collections import deque
 
 #fifo.py
@@ -20,7 +18,7 @@ def fifo(ciag_odwolan, rozmiar_pamieci):
 
         # Sprawdź, czy strona już jest w pamięci JEŻELI JEST, TO IDZIEMY DALEJ , DO KOLEJNEJ STRONY W KOLEJCE
         #---------------------------------------------
-        indeks = next((i for i, (s, _) in enumerate(pamiec) if s == strona), None)
+        indeks = next((i for i, (s, j) in enumerate(pamiec) if s == strona), None)
         
         if indeks is not None:
             continue  

@@ -1,4 +1,3 @@
-# algorithms/second_chance.py
 
 from collections import deque
 
@@ -34,13 +33,17 @@ def lfu(ciag_odwolan, rozmiar_pamieci):
                 pamiec.append(bit)
                 #---------------------------------------------
 
-            # Teraz usuwamy stronę z początku kolejki, ponieważ jej bit odwołania wynosi 0
+            #USUWAMY STRONĘ Z BITEM 0 (KOLEJNĄ STRONĘ)
+            #------------------------------------------------------
             strona_do_usuniecia = pamiec.popleft()
             del bity_odwolania[strona_do_usuniecia]
+            #------------------------------------------------------
 
-            # Dodajemy nową stronę
+            # WSTAWIAMY NOWĄ STRONĘ
+            #------------------------------------------------------
             pamiec.append(strona)
             bity_odwolania[strona] = 1
+            #------------------------------------------------------
 
     return bledy
 
