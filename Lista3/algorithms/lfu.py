@@ -1,7 +1,7 @@
 
 from collections import deque
 
-def lfu(ciag_odwolan, rozmiar_pamieci):
+def second_chance(ciag_odwolan, rozmiar_pamieci):
     #ZM.POMOCNICZE
     #---------------------------------------------
     pamiec = deque()  # FIFO

@@ -8,12 +8,13 @@ from config import DLUGOSC_FAZY
 from algorithms.fifo import fifo
 from algorithms.lru import lru
 from algorithms.opt import opt
-from algorithms.lfu import lfu
+from algorithms.lfu import second_chance
 from algorithms.rand import rand
 from utils import wypisz_wyniki, ustaw_ziarno
 from config import LOSOWE_ZIARNO
 import matplotlib.pyplot as plt
-
+import random
+LOSOWE_ZIARNO = random.randint(0,100)
 # Listy do wyników
 fifo_wyniki = []
 lru_wyniki = []
@@ -26,7 +27,7 @@ ciag = generuj_ciag_odwolan()
 
 #WYKRES L.BŁĘDÓW DLA RÓŻCZNEJ ILOŚCI PAMIĘCI FIZYCZNEJ
 #---------------------------------------------
-L_RAMEK= [1,2,4,8,10,12,15,16,20,30,40,50]
+L_RAMEK= [1,2,4,5,6,7,8,9,10,12,15,16,20,30,40,50]
 for i in L_RAMEK:
 
     ROZMIAR_PAMIECI_FIZYCZNEJ=i
@@ -37,7 +38,7 @@ for i in L_RAMEK:
         "FIFO": fifo(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
         "LRU": lru(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
         "OPT": opt(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
-        "LFU": lfu(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
+        "LFU": second_chance(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
         "RAND": rand(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
     }
     fifo_wyniki.append(wyniki["FIFO"])
@@ -88,7 +89,7 @@ for i in R_WIRTUALNEJ:
         "FIFO": fifo(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
         "LRU": lru(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
         "OPT": opt(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
-        "LFU": lfu(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
+        "LFU": second_chance(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
         "RAND": rand(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
     }
     fifo_wyniki.append(wyniki["FIFO"])
@@ -140,7 +141,7 @@ for i in L_FAZ:
         "FIFO": fifo(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
         "LRU": lru(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
         "OPT": opt(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
-        "LFU": lfu(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
+        "LFU": second_chance(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
         "RAND": rand(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
     }
     fifo_wyniki.append(wyniki["FIFO"])
@@ -159,7 +160,7 @@ plt.plot(L_FAZ, opt_wyniki, label='OPT', marker='^')
 plt.plot(L_FAZ, lfu_wyniki, label='LFU', marker='D')
 plt.plot(L_FAZ, rand_wyniki, label='RAND', marker='x')
 
-plt.title('Liczba błędów stron vs. rozmiar pamięci WIRTUALNEJ (PAMIĘĆ FIZYCZNA CONST u nas 10)')
+plt.title('Liczba błędów stron vs. ilość faz (PAMIĘĆ FIZYCZNA CONST u nas 10)')
 plt.xlabel('Liczba ramek (rozmiar pamięci fizycznej)')
 plt.ylabel('Liczba błędów stron')
 plt.legend()
@@ -187,7 +188,7 @@ for i in D_FAZ:
         "FIFO": fifo(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
         "LRU": lru(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
         "OPT": opt(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
-        "LFU": lfu(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
+        "LFU": second_chance(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
         "RAND": rand(ciag, ROZMIAR_PAMIECI_FIZYCZNEJ),
     }
     fifo_wyniki.append(wyniki["FIFO"])
@@ -206,7 +207,7 @@ plt.plot(D_FAZ, opt_wyniki, label='OPT', marker='^')
 plt.plot(D_FAZ, lfu_wyniki, label='LFU', marker='D')
 plt.plot(D_FAZ, rand_wyniki, label='RAND', marker='x')
 
-plt.title('Liczba błędów stron vs. rozmiar pamięci WIRTUALNEJ (PAMIĘĆ FIZYCZNA CONST u nas 10)')
+plt.title('Liczba błędów stron vs. rozmiar FAZ (PAMIĘĆ FIZYCZNA CONST u nas 10)')
 plt.xlabel('Liczba ramek (rozmiar pamięci fizycznej)')
 plt.ylabel('Liczba błędów stron')
 plt.legend()
