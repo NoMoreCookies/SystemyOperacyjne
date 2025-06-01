@@ -10,6 +10,9 @@ def lru_ppf_procesowy_z_logiem(ciag_odwolan, virtual_capacity, process_count, pr
     # Dopasowujemy sumę ramek do całkowitej pojemności pamięci wirtualnej
     process_frame_counts[0] += virtual_capacity - sum(process_frame_counts)
 
+    # Inicjalizacja dostępnych ramek - to co zostało po przydziale procesom
+    available_frames = virtual_capacity - sum(process_frame_counts)
+
     # Słownik pamięci procesów: {proces_id: {strona: wiek strony (czas od ostatniego użycia)}}
     pamiec_procesow = {p: {} for p in range(process_count)}
 
@@ -26,9 +29,6 @@ def lru_ppf_procesowy_z_logiem(ciag_odwolan, virtual_capacity, process_count, pr
     # Zapamiętujemy ile ramek miał proces w momencie zawieszenia (do odwieszenia)
     zawieszone_ramki = {p: 0 for p in range(process_count)}
 
-    # Liczba dostępnych ramek (wolnych) w systemie, które mogą być przydzielone procesom
-    available_frames = 0
-
     # Lista logów z informacjami o stanie systemu w czasie
     log_data = []
 
@@ -41,12 +41,13 @@ def lru_ppf_procesowy_z_logiem(ciag_odwolan, virtual_capacity, process_count, pr
     # Pętla po wszystkich odwołaniach (posortowanych wg czasu)
     for idx, (process_id, page, time, _) in enumerate(sorted(ciag_odwolan, key=lambda x: x[2])):
 
-        # Inicjujemy słownik błędów dla każdego procesu na ten krok
-        page_fault_occurred = {pid: False for pid in range(process_count)}
+        # Inicjujemy zmienną błędu strony tylko dla aktualnego procesu
+        page_fault_occurred = False
 
         # Jeśli proces jest zawieszony - nie obsługujemy jego żądań (nie zwiększamy pamięci)
         if suspended[process_id]:
             recent_requests[process_id].append(0)  # brak żądania (proces "nieaktywny")
+            recent_faults[process_id].append(0)
         else:
             # Proces jest aktywny, dodajemy żądanie
             recent_requests[process_id].append(1)
@@ -67,6 +68,7 @@ def lru_ppf_procesowy_z_logiem(ciag_odwolan, virtual_capacity, process_count, pr
                 # Błąd strony - strona nie jest w pamięci
                 bledy_procesow[process_id] += 1
                 recent_faults[process_id].append(1)  # zapamiętujemy błąd
+                page_fault_occurred = True
 
                 # Dodajemy stronę do pamięci (jeśli jest miejsce)
                 if len(pamiec) < frame_limit:
@@ -133,7 +135,7 @@ def lru_ppf_procesowy_z_logiem(ciag_odwolan, virtual_capacity, process_count, pr
             for pid in range(process_count):
                 if suspended[pid]:
                     needed = zawieszone_ramki[pid]  # ile ramek potrzebuje do wznowienia
-                    if available_frames >= needed:
+                    if available_frames >= needed and needed > 0:
                         suspended[pid] = False
                         process_frame_counts[pid] = needed
                         available_frames -= needed
@@ -147,9 +149,9 @@ def lru_ppf_procesowy_z_logiem(ciag_odwolan, virtual_capacity, process_count, pr
                     'process_id': pid,
                     'current_ppf': current_ppf[pid],
                     'allocated_frames': process_frame_counts[pid],
-                    'page_fault_occurred': page_fault_occurred[pid],
+                    'page_fault_occurred': page_fault_occurred if pid == process_id else False,
                     'process_suspended': suspended[pid],
-                    'frame_action': frame_actions[pid]
+                    'frame_action': frame_actions[pid] if frame_actions[pid] is not None else 'none'
                 })
 
     # Zwracamy słownik z błędami, stan zawieszenia i logi
