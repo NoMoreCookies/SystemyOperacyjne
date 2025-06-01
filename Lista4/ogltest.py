@@ -60,7 +60,7 @@ def run_lru_only_test():
             virtual_capacity=vc,
             process_count=process_count,
             process_proportions=process_proportions,
-            delta_t=100,
+            delta_t=75,
             c_factor=0.5
         )
         combined_results["Model strefowy"].append(sum(faults.values()))

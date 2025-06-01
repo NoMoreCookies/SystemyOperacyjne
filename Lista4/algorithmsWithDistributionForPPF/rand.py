@@ -22,55 +22,50 @@ def rand_ppf_procesowy(ciag_odwolan, virtual_capacity, process_count, process_pr
 
     total_requests_sorted = sorted(ciag_odwolan, key=lambda x: x[2])
 
-    log_data = []  # tutaj będziemy zapisywać logi
+    log_data = []
     current_time = 0 
 
     for idx, (process_id, page, time, _) in enumerate(total_requests_sorted):
 
-        # Pomijamy wstrzymane procesy
         if suspended[process_id]:
             recent_faults[process_id].append(0)
+            page_fault_occurred = 0
         else:
-
             pamiec = pamiec_procesow[process_id]
             rozmiar_pamieci = process_frame_counts[process_id]
 
             if page in pamiec:
-                # Trafienie - nic nie robimy
                 recent_faults[process_id].append(0)
+                page_fault_occurred = 0
             else:
-                # Błąd strony
                 bledy_procesow[process_id] += 1
                 recent_faults[process_id].append(1)
+                page_fault_occurred = 1
 
                 if len(pamiec) < rozmiar_pamieci:
                     pamiec.add(page)
                 else:
-                    # Usuwamy losową stronę
                     strona_do_usuniecia = random.choice(list(pamiec))
                     pamiec.remove(strona_do_usuniecia)
                     pamiec.add(page)
 
             pamiec_procesow[process_id] = pamiec
         
-
-        # Co delta_t kroków aktualizujemy przydziały i sprawdzamy zawieszenia
-        if (idx+1) % delta_t == 0 and idx > 0:
-            current_time += delta_t 
+        # Aktualizacja przydziałów co delta_t kroków
+        if (idx + 1) % delta_t == 0:
+            current_time += delta_t
             for pid in range(process_count):
-                frame_action = None  # do logowania akcji na ramkach
+                frame_action = None
                 faults = sum(recent_faults[pid])
                 ppf = faults / delta_t
 
-                # Wstrzymaj proces, jeśli PPF za wysoki
                 if ppf > high_threshold and not suspended[pid]:
                     suspended[pid] = True
-                    # Zwolnij ramki i wyczyść pamięć
                     available_frames += process_frame_counts[pid]
                     process_frame_counts[pid] = 0
+                    pamiec_procesow[pid].clear()  # czyszczenie pamięci przy zawieszeniu
                     frame_action = "suspended"
                 elif not suspended[pid]:
-                    # Dostosuj ramki, jeśli nie wstrzymany
                     if ppf > upper_threshold:
                         if available_frames > 0:
                             process_frame_counts[pid] += 1
@@ -85,14 +80,14 @@ def rand_ppf_procesowy(ciag_odwolan, virtual_capacity, process_count, process_pr
                                 pamiec_procesow[pid].remove(losowa_strona)
                             frame_action = "lost"
 
-                # Logowanie danych dla procesu pid
                 log_data.append({
-                    'timestamp': current_time,  # można też dać time lub idx // delta_t
+                    'timestamp': current_time,
                     'process_id': pid,
                     'current_ppf': ppf,
                     'allocated_frames': process_frame_counts[pid],
                     'process_suspended': suspended[pid],
-                    'frame_action': frame_action
+                    'frame_action': frame_action,
+                    # 'page_fault_occurred': page_fault_occurred # można dodać, jeśli chcesz
                 })
 
     return bledy_procesow, suspended, log_data

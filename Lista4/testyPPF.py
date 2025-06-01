@@ -38,7 +38,7 @@ results = []
 import matplotlib.pyplot as plt
 
 # Zakres pojemności pamięci wirtualnej do przetestowania
-virtual_capacities = list(range(50, 1001, 10))
+virtual_capacities = list(range(50, 201, 1))
 
 # Przechowujemy wyniki: {algorytm: [lista_błędów_dla_kolejnych_pojemności]}
 alg_results = {name: [] for name in algorithms}

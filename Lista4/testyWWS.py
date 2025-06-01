@@ -32,7 +32,7 @@ def run_comparison():
         "RAND_WWS": rand_wws_procesowy,
     }
 
-    virtual_capacities = list(range(50, 1001, 10)) 
+    virtual_capacities = list(range(20, 200, 1)) 
 
     results = {name: [] for name in wws_algorithms}
 

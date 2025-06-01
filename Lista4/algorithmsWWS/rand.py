@@ -13,6 +13,8 @@ def rand_wws_procesowy(ciag_odwolan, virtual_capacity, process_count, process_pr
     bledy_procesow = {p: 0 for p in range(process_count)}
     recent_pages = {p: deque(maxlen=delta_t) for p in range(process_count)}
     suspended = {p: False for p in range(process_count)}
+    # Inicjujemy available_frames jako puli wolnych ramek (jeśli jest jakaś globalna pula)
+    # W tym algorytmie zaczynamy od 0, ramki przydzielone procesom
     available_frames = 0
 
     total_requests_sorted = sorted(ciag_odwolan, key=lambda x: x[2])
@@ -47,6 +49,7 @@ def rand_wws_procesowy(ciag_odwolan, virtual_capacity, process_count, process_pr
 
         # Aktualizacja co c odwołań
         if (idx + 1) % c == 0:
+            # Obliczamy dostępne ramki na nowo, licząc sumę ramek aktywnych procesów
             available_frames = virtual_capacity - sum(
                 process_frame_counts[pid] for pid in range(process_count) if not suspended[pid]
             )
@@ -57,12 +60,14 @@ def rand_wws_procesowy(ciag_odwolan, virtual_capacity, process_count, process_pr
                 okno = [p for p in recent_pages[pid] if p is not None]
                 wws_sizes[pid] = len(set(okno))
 
+            # Proces zawieszenia lub zmiany przydziału ramek
             for pid in range(process_count):
                 frame_action = None
                 wws_size = wws_sizes[pid]
 
                 if wws_size > process_frame_counts[pid] and available_frames < (wws_size - process_frame_counts[pid]):
                     if not suspended[pid]:
+                        # Zawieszamy proces i zwalniamy jego ramki
                         suspended[pid] = True
                         available_frames += process_frame_counts[pid]
                         process_frame_counts[pid] = 0
@@ -78,9 +83,11 @@ def rand_wws_procesowy(ciag_odwolan, virtual_capacity, process_count, process_pr
                             available_frames -= diff
                             frame_action = "grew"
                         elif diff < 0 and current_frames > 1:
-                            process_frame_counts[pid] += diff
-                            available_frames -= diff
-                            for _ in range(-diff):
+                            # Przy zmniejszaniu ramek oddajemy je do dostępnych
+                            reduce_by = min(-diff, current_frames - 1)  # nie zmniejszamy poniżej 1
+                            process_frame_counts[pid] -= reduce_by
+                            available_frames += reduce_by
+                            for _ in range(reduce_by):
                                 if pamiec_procesow[pid]:
                                     strona = random.choice(list(pamiec_procesow[pid]))
                                     pamiec_procesow[pid].remove(strona)
@@ -96,16 +103,17 @@ def rand_wws_procesowy(ciag_odwolan, virtual_capacity, process_count, process_pr
                     'frame_action': frame_action
                 })
 
-            # Wznawianie procesów
+            # Próba wznowienia procesów
             for pid in range(process_count):
                 if suspended[pid]:
                     wws_size = wws_sizes[pid]
+                    # Wznowienie tylko gdy mamy wystarczająco ramek
                     if wws_size <= available_frames and wws_size > 0:
                         suspended[pid] = False
                         process_frame_counts[pid] = wws_size
                         available_frames -= wws_size
 
-                        # Przywracanie pamięci
+                        # Odtwarzamy pamięć
                         pamiec_procesow[pid].clear()
                         unique_pages = []
                         seen = set()
