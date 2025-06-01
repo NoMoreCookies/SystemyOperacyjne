@@ -2,7 +2,7 @@ import random
 from collections import deque
 
 def lru_ppf_procesowy_z_logiem(ciag_odwolan, virtual_capacity, process_count, process_proportions,
-                                delta_t=75, lower_threshold=0.3, upper_threshold=0.6, high_threshold=0.8,
+                                delta_t=100, lower_threshold=0.3, upper_threshold=0.6, high_threshold=0.8,
                                 min_frames=2):
 
     # Inicjalizacja liczby ramek dla każdego procesu - minimalnie min_frames, reszta proporcjonalnie

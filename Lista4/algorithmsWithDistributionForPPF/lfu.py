@@ -2,7 +2,7 @@ import random
 from collections import deque
 
 def second_chance_ppf_procesowy(ciag_odwolan, virtual_capacity, process_count, process_proportions,
-                                 delta_t=100, lower_threshold=0.1, upper_threshold=0.25, high_threshold=0.5):
+                                 delta_t=100, lower_threshold=0.3, upper_threshold=0.6, high_threshold=0.8):
 
     # Przydział początkowy ramek (proporcjonalny)
     process_frame_counts = [int(virtual_capacity * p) for p in process_proportions]
