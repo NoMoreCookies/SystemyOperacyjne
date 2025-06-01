@@ -11,7 +11,6 @@ def generate_requests(process_count, total_frames, total_requests, phases, proce
     process_proportions: lista udziałów każdego procesu (sumuje się do 1)TUTAJ MUSZĘ TO JESZCZE ZMIENIĆ,ONA MÓWI O TYM ILE ZAJMUJĄ WSZYSTKICH RAMEK,
     ALE NIE MÓWI O TYM JAK SĄ GENEROWANE,GENEROWANE POWINNY CHYBA ZOSTAĆ LOSOWO, I GUESS, ALE IMO TO CO ZROBIŁEM NIE JEST ZŁE
     """
-    r
     # 1. Przydziel każdemu procesowi unikalny zestaw stron (ramki) PROPORCJONALNIE DO Udziałów
     #------------------------------------------------------------------------------------------
 
